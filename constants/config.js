@@ -1,0 +1,6 @@
+export default {
+    PRIVATE_KEY: process.env.NEXT_PULIC_PRIVATE_KEY,
+    NFT_MARKET_ADDRESS: process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS,
+    NFT_ADDRESS: process.env.NEXT_PUBLIC_NFT_ADDRESS,
+    INFURA_ID: process.env.NEXT_PUBLIC_INFURA_ID,
+}

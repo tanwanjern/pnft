@@ -3,19 +3,21 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Web3Modal from "web3modal"
 
-import {
-  nftmarketaddress, nftaddress
-} from '../config'
-
+import config from '../constants/config';
 import Market from '../artifacts/contracts/Market.sol/NFTMarket.json'
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
 
 export default function MyAssets() {
+  const nftaddress = config.NFT_ADDRESS;
+  const nftmarketaddress = config.NFT_MARKET_ADDRESS;
+  
   const [nfts, setNfts] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
+
   useEffect(() => {
     loadNFTs()
   }, [])
+
   async function loadNFTs() {
     const web3Modal = new Web3Modal({
       network: "mainnet",
@@ -45,7 +47,13 @@ export default function MyAssets() {
     setNfts(items)
     setLoadingState('loaded') 
   }
-  if (loadingState === 'loaded' && !nfts.length) return (<h1 className="py-10 px-20 text-3xl">No assets owned</h1>)
+
+  if (loadingState === 'loaded' && !nfts.length) return (
+    <div className="flex items-center justify-center py-10 px-3">
+      <h1 className="text-xl text-gray-400 font-semibold">No assets owned</h1>
+    </div>
+  )
+  
   return (
     <div className="flex justify-center">
       <div className="p-4">

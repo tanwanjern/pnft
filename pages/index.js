@@ -3,21 +3,25 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Web3Modal from "web3modal"
 
-import {
-  nftaddress, nftmarketaddress
-} from '../config'
-
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
 import Market from '../artifacts/contracts/Market.sol/NFTMarket.json'
+import config from '../constants/config';
 
 export default function Home() {
+  const infuraId = config.INFURA_ID;
+  const nftaddress = config.NFT_ADDRESS;
+  const nftmarketaddress = config.NFT_MARKET_ADDRESS;
+  const rpc = `https://polygon-mumbai.infura.io/v3/${infuraId}`
+
   const [nfts, setNfts] = useState([])
-  const [loadingState, setLoadingState] = useState('not-loaded')
+  const [loadingState, setLoadingState] = useState('not-loaded');
+  
   useEffect(() => {
     loadNFTs()
   }, [])
+
   async function loadNFTs() {    
-    const provider = new ethers.providers.JsonRpcProvider()
+    const provider = new ethers.providers.JsonRpcProvider(rpc)
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
     const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, provider)
     const data = await marketContract.fetchMarketItems()
@@ -40,6 +44,7 @@ export default function Home() {
     setNfts(items)
     setLoadingState('loaded') 
   }
+
   async function buyNft(nft) {
     const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
@@ -54,7 +59,13 @@ export default function Home() {
     await transaction.wait()
     loadNFTs()
   }
-  if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>)
+
+  if (loadingState === 'loaded' && !nfts.length) return (
+    <div className="flex items-center justify-center py-10 px-3">
+      <h1 className="text-xl text-gray-400 font-semibold">No items in marketplace</h1>
+    </div>
+  )
+
   return (
     <div className="flex justify-center">
       <div className="px-4" style={{ maxWidth: '1600px' }}>
